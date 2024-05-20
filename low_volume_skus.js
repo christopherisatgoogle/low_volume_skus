@@ -24,7 +24,7 @@ var CUSTOM_LABEL_NR = '4';
 // above. Name this working sheet 'LowVolume'. Copy the link of the new sheet
 // and paste it below.
 var SPREADSHEET_URL =
-    'https://docs.google.com/spreadsheets/d/SPREADSHEET_ID';
+  'https://docs.google.com/spreadsheets/d/SPREADSHEET_ID';
 
 // Set the value for the label for newly flagged low volume products.
 var LABEL_LOW = 'low_clicks_last_30d';
@@ -46,8 +46,8 @@ var FILTER_NO_CLICKS = 'metrics.clicks < ' + THRESHOLD;
 // As a condition, it must have the previously added label and for ex. clicks
 // >50. To add further conditions use the AND clause, e.g. AND Conversions > 10.
 var FILTER_RAMPED_UP = 'metrics.clicks > ' + THRESHOLD +
-    ' AND segments.product_custom_attribute' + CUSTOM_LABEL_NR + ' LIKE "' +
-    LABEL_LOW + '" ';
+  ' AND segments.product_custom_attribute' + CUSTOM_LABEL_NR + ' LIKE "' +
+  LABEL_LOW + '" ';
 
 // To filter campaign names, add for ex. AND campaign.name LIKE “%FR_FR%”.
 // Set the filter to true to include it.
@@ -80,9 +80,9 @@ var COUNT_LIMIT = '10000';
 
 function main() {
   var productsNoClicks =
-      getFilteredShoppingProducts(FILTER_NO_CLICKS, checkLabel = false);
+    getFilteredShoppingProducts(FILTER_NO_CLICKS, checkLabel = false);
   var productsRampedUp =
-      getFilteredShoppingProducts(FILTER_RAMPED_UP, checkLabel = true);
+    getFilteredShoppingProducts(FILTER_RAMPED_UP, checkLabel = true);
   var products = productsNoClicks.concat(productsRampedUp);
   pushToSpreadsheet(products);
 }
@@ -105,11 +105,11 @@ function getFilteredShoppingProducts(filters, checkLabel) {
   };
 
   var query = 'SELECT segments.product_item_id, ' + campaignField + merchantIdField + labelField +
-      'metrics.clicks, metrics.impressions ' +
-      'FROM shopping_performance_view WHERE ' + filters +
-      ' AND segments.product_item_id != "undefined"' +
-      ' AND segments.date DURING ' + TIME_DURATION +
-      ' ORDER BY segments.product_item_id LIMIT ' + COUNT_LIMIT;
+    'metrics.clicks, metrics.impressions ' +
+    'FROM shopping_performance_view WHERE ' + filters +
+    ' AND segments.product_item_id != "undefined"' +
+    ' AND segments.date DURING ' + TIME_DURATION +
+    ' ORDER BY segments.product_item_id LIMIT ' + COUNT_LIMIT;
 
   var products = [];
   var count = 0;
@@ -119,11 +119,11 @@ function getFilteredShoppingProducts(filters, checkLabel) {
     var row = rows.next();
     var clicks = row['metrics.clicks'];
     var productId = (PRODUCT_ID_CAPITALISED) ?
-        row['segments.product_item_id'].toUpperCase() :
-        row['segments.product_item_id'];
+      row['segments.product_item_id'].toUpperCase() :
+      row['segments.product_item_id'];
 
     // Label product as low volume, if below threshold defined above.
-    if (clicks < THRESHOLD) {
+    if (parseInt(clicks) < parseInt(THRESHOLD)) {
       products.push([productId, LABEL_LOW]);
       count += 1;
 
@@ -137,7 +137,6 @@ function getFilteredShoppingProducts(filters, checkLabel) {
   return products;
 }
 
-
 function pushToSpreadsheet(data) {
   var spreadsheet = SpreadsheetApp.openByUrl(SPREADSHEET_URL);
   var sheet = spreadsheet.getSheetByName('LowVolume');
@@ -148,8 +147,8 @@ function pushToSpreadsheet(data) {
   var start_row = 2;
   var endRow = start_row + data.length - 1;
   var range = sheet.getRange(
-      'A' + start_row + ':' +
-      'B' + endRow);
+    'A' + start_row + ':' +
+    'B' + endRow);
   if (data.length > 0) {
     range.setValues(data);
   }
